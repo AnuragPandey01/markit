@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import pb from "../lib/pb";
 import { useEffect, useState } from "react";
 import { Button, Spinner, TodoItem, PriorityDropdown, Footer } from "../components";
-import { toast } from "react-toastify";
 import useAddTodo from "../hooks/useAddTodo";
 import useGetTodos from "../hooks/useGetTodos";
 
@@ -24,14 +23,14 @@ const HomePage = () => {
     const { addTodo, loading: addingTodo, error: addError } = useAddTodo();
     const { getTodos, data, loading: fetchingTodos, error: fetchError } = useGetTodos();
 
-    useEffect(() => {
-        getTodos(selectedFilter);
-    }, [selectedFilter]);
-
     const createNewTodo = async () => {
         await addTodo(newTodo.title, newTodo.priority)
         getTodos(selectedFilter)
     };
+
+    useEffect(() => {
+        getTodos();
+    },[])
 
     const handleFilterChange = (e) => {
         setSelectedFilter(e.target.innerText);
@@ -88,7 +87,7 @@ const HomePage = () => {
         {fetchingTodos && <Spinner/>}
 
         {!fetchingTodos && data.map((todo) => (
-            <TodoItem
+            (selectedFilter == "All" || todo.priority == selectedFilter) && <TodoItem
                 key={todo.id}
                 todo={todo}
                 onToggle={handleToggle}
