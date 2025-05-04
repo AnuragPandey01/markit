@@ -1,4 +1,4 @@
-import pb from "../../lib/pb"
+import pb from "../lib/pb"
 import {useState} from "react"
 
 export default function useAddTodo() {

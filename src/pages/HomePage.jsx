@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import pb from "../../lib/pb";
+import pb from "../lib/pb";
 import { useEffect, useState } from "react";
 import { Button, Spinner, TodoItem, PriorityDropdown, Footer } from "../components";
 import { toast } from "react-toastify";

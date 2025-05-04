@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import './App.css';
 import { Routes, Route } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import pb from "../lib/pb";
+import pb from "./lib/pb";
 import { ToastContainer } from 'react-toastify';
 import { ProtectedRoute } from './components';
 import {Footer} from "./components";

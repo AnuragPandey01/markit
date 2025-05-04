@@ -1,7 +1,7 @@
 import { MdOutlineMailOutline, MdOutlinePassword, MdPersonOutline } from "react-icons/md";
 import InputField from "../components/InputField";
 import { useEffect, useState } from "react";
-import pb from "/home/user/pocketbase/lib/pb.js"
+import pb from "../lib/pb"
 import { useNavigate } from "react-router-dom";
 import {toast} from "react-toastify"
 import { Button, Spinner} from "../components"

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import pb from "../../lib/pb"
+import pb from "../lib/pb"
 import InputField from "../components/InputField"
 import { MdOutlineMailOutline, MdOutlinePassword } from "react-icons/md"
 import {toast} from "react-toastify"

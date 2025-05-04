@@ -1,5 +1,5 @@
 import { useState } from "react";
-import pb from "../../lib/pb"
+import pb from "../lib/pb"
 
 
 export default function useGetTodos() {
