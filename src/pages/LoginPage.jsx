@@ -78,7 +78,7 @@ const LoginPage = () => {
             </div>
         </div>
         <div className="grow-1 hidden md:block">
-            <img src="src/assets/login.svg" alt="login art" />
+            <img src="/assets/login.svg" alt="login art" />
         </div>
     </div>
 }

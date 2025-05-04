@@ -58,7 +58,7 @@ const SignupPage = () => {
     return <div className="flex h-screen w-screen items-center p-4 md:p-15">
         {/* Left Half with Background Image */}
         <div className="grow-1 hidden md:block">
-            <img src="src/assets/register.svg" className="w-[400px] m-auto" />
+            <img src="/assets/register.svg" className="w-[400px] m-auto" />
         </div>
 
         {/* Right Half with Sign Up Heading */}
