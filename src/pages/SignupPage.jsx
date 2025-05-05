@@ -55,7 +55,7 @@ const SignupPage = () => {
         toast.error(error)
     },[error])
 
-    return <div className="flex h-screen w-screen items-center p-4 md:p-15">
+    return <div className="flex items-center">
         {/* Left Half with Background Image */}
         <div className="grow-1 hidden md:block">
             <img src="/assets/register.svg" className="w-[400px] m-auto" />

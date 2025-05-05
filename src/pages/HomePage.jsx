@@ -44,7 +44,7 @@ const HomePage = () => {
         getTodos();
     };
 
-    return <div className="flex flex-col items-center h-auto w-screen p-4 md:justify-center">
+    return <div className="flex flex-col items-center md:justify-center">
         <h2 className="text-2xl font-semibold">Mark it</h2>
         <input
             placeholder="enter todo"

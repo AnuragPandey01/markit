@@ -1,7 +1,7 @@
 const Footer = () => {
     return (
-      <footer className="bg-gradient-to-r from-blue-50 to-indigo-50 py-6 mt-8 border-t border-gray-200 w-full md:w-sm mx-auto">
-        <div className="mx-auto px-4 flex flex-col items-center text-center">
+      <footer className="bg-gradient-to-r from-blue-50 to-indigo-50 py-6 mt-8 border-t border-gray-200 w-screen">
+        <div className="px-4 flex flex-col items-center text-center">
           {/* Made with love */}
           <div className="flex items-center mb-2">
             <span className="text-gray-600 mr-1">Made with</span>

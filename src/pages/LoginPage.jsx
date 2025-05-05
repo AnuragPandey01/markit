@@ -46,7 +46,7 @@ const LoginPage = () => {
     };
 
 
-    return <div className="flex h-screen w-screen p-4 md:p-15">
+    return <div className="flex">
         
         <div className="grow-1">
             <h2 className="text-center text-2xl font-bold mb-9">Login</h2>
