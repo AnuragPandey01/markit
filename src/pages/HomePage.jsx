@@ -1,9 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import pb from "../lib/pb";
 import { useEffect, useState } from "react";
-import { Button, Spinner, TodoItem, PriorityDropdown, Footer } from "../components";
-import useAddTodo from "../hooks/useAddTodo";
-import useGetTodos from "../hooks/useGetTodos";
+import { Button, Spinner, TodoItem, PriorityDropdown} from "../components";
+import {useTodoStore, useAuthStore} from "../store"
+import {toast} from "react-toastify"
 
 const FilterButton = ({ isSelected, text, onSelectChange }) => {
     return <button onClick={onSelectChange} className={`${isSelected ? 'bg-blue-400 text-white font-semibold' : 'border-gray-400 border-2 text-black'}  px-4 py-1 rounded-md`}>
@@ -13,39 +11,37 @@ const FilterButton = ({ isSelected, text, onSelectChange }) => {
 
 const HomePage = () => {
 
-    const navigate = useNavigate();
     const [selectedFilter, setSelectedFilter] = useState("All");
     const [newTodo, setNewTodo] = useState({
         title: "",
         priority: "Low"
     });
 
-    const { addTodo, loading: addingTodo, error: addError } = useAddTodo();
-    const { getTodos, data, loading: fetchingTodos, error: fetchError } = useGetTodos();
-
-    const createNewTodo = async () => {
-        await addTodo(newTodo.title, newTodo.priority)
-        getTodos(selectedFilter)
-    };
+    const {todos,loading,error,fetchTodos,addTodo,markTodoAsDone} = useTodoStore()
+    const {logout} = useAuthStore();
 
     useEffect(() => {
-        getTodos();
+        fetchTodos();
     },[])
+
+    useEffect(() => {
+        toast.error(error)
+    },[error])
 
     const handleFilterChange = (e) => {
         setSelectedFilter(e.target.innerText);
     };
 
-    const handleToggle = async (todo) => {
-        await pb.collection("todo").update(todo.id, {
-            ...todo,
-            is_completed: !todo.is_completed
+    const handleAddTodo = () => {
+        addTodo(newTodo.title,newTodo.priority);
+        setNewTodo({
+            title: "",
+            priority: "Low"
         });
-        getTodos();
-    };
+    }
 
     return <div className="flex flex-col items-center md:justify-center">
-        <h2 className="text-2xl font-semibold">Mark it</h2>
+        <h2 className="text-2xl font-semibold" onClick={logout}>Mark it</h2>
         <input
             placeholder="enter todo"
             value={newTodo.title}
@@ -58,8 +54,8 @@ const HomePage = () => {
                 setNewTodo({ ...newTodo, priority: it });
             }}
         />
-        {addingTodo && <Spinner className="my-4"/>}
-        {!addingTodo && <Button onClick={createNewTodo} className="w-full md:w-sm my-4" text="Add Todo" />}
+        {/* {addingTodo && <Spinner className="my-4"/>} */}
+        <Button onClick={handleAddTodo} className="w-full md:w-sm my-4" text="Add Todo" />
 
         <div className="flex gap-4 flex-wrap mb-3">
             <FilterButton
@@ -84,13 +80,13 @@ const HomePage = () => {
             />
         </div>
 
-        {fetchingTodos && <Spinner/>}
+        {loading && <Spinner/>}
 
-        {!fetchingTodos && data.map((todo) => (
+        {!loading && todos.map((todo) => (
             (selectedFilter == "All" || todo.priority == selectedFilter) && <TodoItem
                 key={todo.id}
                 todo={todo}
-                onToggle={handleToggle}
+                onToggle={() => {markTodoAsDone(todo.id)}}
             />
         ))}
     </div>

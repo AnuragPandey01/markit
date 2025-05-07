@@ -1,16 +1,15 @@
 import { MdOutlineMailOutline, MdOutlinePassword, MdPersonOutline } from "react-icons/md";
 import InputField from "../components/InputField";
 import { useEffect, useState } from "react";
-import pb from "../lib/pb"
-import { useNavigate } from "react-router-dom";
 import {toast} from "react-toastify"
 import { Button, Spinner} from "../components"
+import { useAuthStore } from "../store";
+import { useNavigate } from "react-router-dom";
 
 const SignupPage = () => {
 
+    const {loading, error, signup} = useAuthStore();
     const navigate = useNavigate();
-    const [error, setError] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
 
     const [form, setForm] = useState(
         {
@@ -36,19 +35,7 @@ const SignupPage = () => {
             "password": form.password,
             "passwordConfirm": form.confirmPassword
         };
-        setIsLoading(true)
-        try {
-            await pb.collection('users').create(data);
-            await pb.collection('users').authWithPassword(
-                data.email,
-                data.password,
-            );
-            if (pb.authStore.isValid) navigate('/home')
-        } catch (err) {
-            setError(err.message);
-        }finally{
-            setIsLoading(false);
-        }
+        signup(data);
     }
 
     useEffect(()=>{
@@ -107,11 +94,11 @@ const SignupPage = () => {
                     <span className="pl-5">I agree to all terms</span>
                 </div>
 
-                {isLoading && <Spinner />}
-                {!isLoading && <Button onClick={register} text={"Register"} />}
+                {loading && <Spinner />}
+                {!loading && <Button onClick={register} text={"Register"} />}
 
                 <div className="text-center pt-12 pb-12">
-                    <p>Already have an account? <a href="/login" className="underline font-semibold">Log in here.</a></p>
+                    <p>Already have an account? <a onClick={() => navigate("/login")} className="underline font-semibold cursor-pointer">Log in here.</a></p>
                 </div>
             </div>
         </div>

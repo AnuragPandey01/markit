@@ -1,24 +1,23 @@
 import { useEffect } from 'react';
-import './App.css';
 import { Routes, Route } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import pb from "./lib/pb";
 import { ToastContainer } from 'react-toastify';
 import { ProtectedRoute } from './components';
 import { Footer } from "./components";
 
 import { HomePage, SignupPage, LoginPage } from "./pages"
+import { useAuthStore } from './store';
 
 function App() {
 
   const navigate = useNavigate();
 
-  const isAuthenticated = pb.authStore.isValid
-
+  const {authenticated} = useAuthStore()
 
   useEffect(() => {
-    if (pb.authStore.isValid) navigate("/home");
-  }, []);
+    if (authenticated) navigate("/home");
+    else navigate('/');
+  }, [authenticated]);
 
   return (
     <div className='min-h-screen w-screen flex flex-col'>
@@ -29,7 +28,7 @@ function App() {
           <Route
             path="/home"
             element={
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ProtectedRoute isAuthenticated={authenticated}>
                 <HomePage />
               </ProtectedRoute>
             }

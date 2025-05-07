@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react"
-import pb from "../lib/pb"
 import InputField from "../components/InputField"
 import { MdOutlineMailOutline, MdOutlinePassword } from "react-icons/md"
 import {toast} from "react-toastify"
 import { Button , Spinner} from "../components"
+import { useAuthStore } from "../store"
 import { useNavigate } from "react-router-dom"
 
 const LoginPage = () => {
 
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-
-    const navigate = useNavigate()
+    const {loading, error, login} = useAuthStore();
+    const navigate = useNavigate();
 
     const [form, setForm] = useState(
         {
@@ -21,22 +19,15 @@ const LoginPage = () => {
     )
 
     useEffect(() => {
-        console.log(error)
         toast.error(error)
     }, [error])
 
-    const login = async () => {
-        setLoading(true);
-        try {
-            await pb.collection('users').authWithPassword(
-                form.email,
-                form.password,
-            );
-            if (pb.authStore.isValid) navigate('/home')
-        } catch (err) {
-            setError(err.message)
-            setLoading(false);
+    const handleLogin = async () => {
+        const data = {
+            email: form.email,
+            password: form.password
         }
+        await login(data);
     }
 
 
@@ -68,12 +59,12 @@ const LoginPage = () => {
                 />
                 {loading && <Spinner />}
                 {!loading && <Button
-                    onClick={login}
+                    onClick={handleLogin}
                     text={"Login"}
                 />}
 
                 <div className="text-center pt-12 pb-12">
-                    <p>Don't have an account? <a href="/" className="underline font-semibold">Sign up here.</a></p>
+                    <p>Don't have an account? <a onClick={() => navigate("/")} className="underline font-semibold cursor-pointer">Sign up here.</a></p>
                 </div>
             </div>
         </div>
