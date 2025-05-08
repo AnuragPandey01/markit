@@ -75,7 +75,8 @@ const useTodoStore = create((set) => ({
       await pb.collection("todo").delete(it.id);
     }catch(err){
       set((state) => ({
-        todos: state.todos.push(it)
+        todos: [...state.todos, it],
+        error: err.message
       }));
     }
   },
