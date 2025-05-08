@@ -23,7 +23,7 @@ const TodoItem = ({ todo, onToggle, isOptionsOpen, onOptionsToggle, onOptionsClo
     };
   }, [isOptionsOpen, onOptionsClose]);
 
-  return <div className={`w-full md:w-xl flex items-center px-4 py-3 relative`}>
+  return <div className={`flex items-center`}>
 
     {/* Checkbox */}
     <div className={`w-5 h-5 rounded border-2 border-black ${todo.is_completed ? 'opacity-60': 'opacity-100'}`} onClick={() => onToggle(todo)}>

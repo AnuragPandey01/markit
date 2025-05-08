@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
-import { Button, Spinner, TodoItem, PriorityDropdown } from "../components";
+import { Button, Spinner, TodoItem, PriorityDropdown, FilterDropdown } from "../components";
 import { useTodoStore, useAuthStore } from "../store"
 import { toast } from "react-toastify"
-import { SearchBar } from "../components";
-
-const FilterButton = ({ isSelected, text, onSelectChange }) => {
-    return <button onClick={onSelectChange} className={`${isSelected ? 'bg-blue-400 text-white font-semibold' : 'border-gray-400 border-2 text-black'}  px-4 py-1 rounded-md`}>
-        {text}
-    </button>
-};
+import { SearchBar, FilterButton } from "../components";
 
 const HomePage = () => {
 
-    const [selectedFilter, setSelectedFilter] = useState("All");
+    const priorityFilters = ["Low", "Medium", "High"];
+    const statusFilters = ["pending","completed"]
+
+    const [selectedPriorityFilter, setSelectedPriorityFilter] = useState(null);
+    const [selectedStatusFilter, setSelectedStatusFilter] = useState(null);
+  
     const [newTodo, setNewTodo] = useState({
         title: "",
         priority: "Low"
@@ -29,11 +28,28 @@ const HomePage = () => {
 
     const [searchQuery, setSearchQuery] = useState("");
 
+    const filterByPriority = (todo) => {
+        return !selectedPriorityFilter || todo.priority === selectedPriorityFilter;
+    };
+
+    const filterBySearch = (todo) => {
+        return todo.text.toLowerCase().includes(searchQuery.toLowerCase());
+    };
+
+    const filterByStatus = (todo) => {
+        if (!selectedStatusFilter) return true;
+        return selectedStatusFilter === "completed" ? todo.is_completed : !todo.is_completed;
+    };
+
     useEffect(() => {
         setFilteredTodos(
-            todos.filter((todo) => ((todo.priority === selectedFilter || selectedFilter === "All") && todo.text.includes(searchQuery)))
-        )
-    }, [todos, searchQuery, selectedFilter])
+            todos.filter(todo => 
+                filterByPriority(todo) && 
+                filterBySearch(todo) && 
+                filterByStatus(todo)
+            )
+        );
+    }, [todos, searchQuery, selectedPriorityFilter, selectedStatusFilter]);
 
     useEffect(() => {
         fetchTodos();
@@ -48,7 +64,7 @@ const HomePage = () => {
     };
 
     const handleFilterChange = (e) => {
-        setSelectedFilter(e.target.innerText);
+        setSelectedPriorityFilter(e.target.innerText);
     };
 
     const handleAddTodo = () => {
@@ -78,14 +94,14 @@ const HomePage = () => {
 
 
 
-    return <div className="flex flex-col items-center md:justify-center">
+    return <div className="flex flex-col items-center px-4">
         <h2 className="text-2xl font-semibold mb-4" onClick={logout}>Mark it</h2>
         <div className="w-full md:w-sm flex mb-4">
             <SearchBar placeholder="Search todo" className="w-full" onChange={handleSearchQueryChange} value={searchQuery} />
-            <Button text="+" className="w-10 rounded-md! ms-2 text-white font-bold" onClick={() => setAddTodoModalOpen(true)} />
+            <Button text="+" className="aspect-square rounded-md! ms-2 text-white font-bold" onClick={() => setAddTodoModalOpen(true)} />
         </div>
         {addTodoModalOpen && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
+            <div className="fixed inset-0 flex items-center justify-center bg-black /70 z-50">
                 <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
                     <h3 className="text-xl font-semibold mb-4">Add New Todo</h3>
                     <input
@@ -108,41 +124,40 @@ const HomePage = () => {
             </div>
         )}
 
-        <div className="flex gap-4 flex-wrap mb-3">
-            <FilterButton
-                isSelected={selectedFilter == "All"}
-                text={"All"}
-                onSelectChange={handleFilterChange}
+        <div className="flex w-full md:w-xl gap-4">
+            <FilterDropdown
+                title="All"
+                onItemClick={setSelectedPriorityFilter}
+                items={priorityFilters}
+                selectedItem={selectedPriorityFilter}
+                onClear={()=>{setSelectedPriorityFilter(null)}}
             />
-            <FilterButton
-                isSelected={selectedFilter == "High"}
-                text={"High"}
-                onSelectChange={handleFilterChange}
+
+            <FilterDropdown
+                title="status"
+                onItemClick={setSelectedStatusFilter}
+                items={statusFilters}
+                selectedItem={selectedStatusFilter}
+                onClear={()=>{setSelectedStatusFilter(null)}}
             />
-            <FilterButton
-                isSelected={selectedFilter == "Medium"}
-                text={"Medium"}
-                onSelectChange={handleFilterChange}
-            />
-            <FilterButton
-                isSelected={selectedFilter == "Low"}
-                text={"Low"}
-                onSelectChange={handleFilterChange}
-            />
+
         </div>
 
         {loading && <Spinner />}
 
-        {!loading && filteredTodos.map((todo) => (
-            <TodoItem
-                key={todo.id}
-                todo={todo}
-                onToggle={() => { toggleTodoCompletion(todo) }}
-                isOptionsOpen={openOptionsId === todo.id}
-                onOptionsToggle={handleOptionsToggle}
-                onOptionsClose={handleOptionsClose}
-            />
-        ))}
+        <div className="flex flex-col gap-4 mt-4 w-full md:w-xl">
+            {!loading && filteredTodos.map((todo) => (
+                <TodoItem
+                    key={todo.id}
+                    todo={todo}
+                    onToggle={() => { toggleTodoCompletion(todo) }}
+                    isOptionsOpen={openOptionsId === todo.id}
+                    onOptionsToggle={handleOptionsToggle}
+                    onOptionsClose={handleOptionsClose}
+                />
+            ))}
+        </div>
+
     </div>
 }
 
