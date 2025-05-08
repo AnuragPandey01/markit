@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Button, Spinner, TodoItem, PriorityDropdown} from "../components";
-import {useTodoStore, useAuthStore} from "../store"
-import {toast} from "react-toastify"
+import { Button, Spinner, TodoItem, PriorityDropdown } from "../components";
+import { useTodoStore, useAuthStore } from "../store"
+import { toast } from "react-toastify"
+import { SearchBar } from "../components";
 
 const FilterButton = ({ isSelected, text, onSelectChange }) => {
     return <button onClick={onSelectChange} className={`${isSelected ? 'bg-blue-400 text-white font-semibold' : 'border-gray-400 border-2 text-black'}  px-4 py-1 rounded-md`}>
@@ -16,46 +17,79 @@ const HomePage = () => {
         title: "",
         priority: "Low"
     });
+    const [openOptionsId, setOpenOptionsId] = useState(null);
 
-    const {todos,loading,error,fetchTodos,addTodo,markTodoAsDone} = useTodoStore()
-    const {logout} = useAuthStore();
+    const [addTodoModalOpen, setAddTodoModalOpen] = useState(false);
+
+    const { todos, loading, error, fetchTodos, addTodo, toggleTodoCompletion } = useTodoStore()
+    const { logout } = useAuthStore();
 
     useEffect(() => {
         fetchTodos();
-    },[])
+    }, [])
 
     useEffect(() => {
         toast.error(error)
-    },[error])
+    }, [error])
 
     const handleFilterChange = (e) => {
         setSelectedFilter(e.target.innerText);
     };
 
     const handleAddTodo = () => {
-        addTodo(newTodo.title,newTodo.priority);
+        addTodo(newTodo.title, newTodo.priority);
         setNewTodo({
             title: "",
             priority: "Low"
         });
+        setAddTodoModalOpen(false);
     }
 
+    const handleCancelTodoAdd = () => {
+        setNewTodo({
+            title: "",
+            priority: "Low"
+        });
+        setAddTodoModalOpen(false);
+    }
+
+    const handleOptionsToggle = (todoId) => {
+        setOpenOptionsId(openOptionsId === todoId ? null : todoId);
+    };
+
+    const handleOptionsClose = () => {
+        setOpenOptionsId(null);
+    };
+
     return <div className="flex flex-col items-center md:justify-center">
-        <h2 className="text-2xl font-semibold" onClick={logout}>Mark it</h2>
-        <input
-            placeholder="enter todo"
-            value={newTodo.title}
-            onChange={(e) => setNewTodo({ title: e.target.value, priority: newTodo.priority })}
-            className="w-full md:w-sm outline-none bg-transparent text-md border-gray-400 border-3 focus:border-blue-400 rounded-md px-2 py-2 mt-5"
-        />
-        <PriorityDropdown
-            selectedPriority={newTodo.priority}
-            onSelect={(it) => {
-                setNewTodo({ ...newTodo, priority: it });
-            }}
-        />
-        {/* {addingTodo && <Spinner className="my-4"/>} */}
-        <Button onClick={handleAddTodo} className="w-full md:w-sm my-4" text="Add Todo" />
+        <h2 className="text-2xl font-semibold mb-4" onClick={logout}>Mark it</h2>
+        <div className="w-full md:w-sm flex mb-4">
+            <SearchBar placeholder="Search todo" className="w-full" />
+            <Button text="+" className="w-10 rounded-md! ms-2 text-white font-bold" onClick={() => setAddTodoModalOpen(true)} />
+        </div>
+        {addTodoModalOpen && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                    <h3 className="text-xl font-semibold mb-4">Add New Todo</h3>
+                    <input
+                        placeholder="enter todo"
+                        value={newTodo.title}
+                        onChange={(e) => setNewTodo({ title: e.target.value, priority: newTodo.priority })}
+                        className="w-full outline-none bg-transparent text-md border-gray-400 border-2 focus:border-blue-400 rounded-md px-2 py-2 mb-4"
+                    />
+                    <PriorityDropdown
+                        selectedPriority={newTodo.priority}
+                        onSelect={(it) => {
+                            setNewTodo({ ...newTodo, priority: it });
+                        }}
+                    />
+                    <div className="flex justify-end mt-4 gap-2">
+                        <Button onClick={handleCancelTodoAdd} className="px-4" text="Cancel" />
+                        <Button onClick={handleAddTodo} className="px-4" text="Add Todo" />
+                    </div>
+                </div>
+            </div>
+        )}
 
         <div className="flex gap-4 flex-wrap mb-3">
             <FilterButton
@@ -80,13 +114,16 @@ const HomePage = () => {
             />
         </div>
 
-        {loading && <Spinner/>}
+        {loading && <Spinner />}
 
         {!loading && todos.map((todo) => (
             (selectedFilter == "All" || todo.priority == selectedFilter) && <TodoItem
                 key={todo.id}
                 todo={todo}
-                onToggle={() => {markTodoAsDone(todo.id)}}
+                onToggle={() => { toggleTodoCompletion(todo) }}
+                isOptionsOpen={openOptionsId === todo.id}
+                onOptionsToggle={handleOptionsToggle}
+                onOptionsClose={handleOptionsClose}
             />
         ))}
     </div>

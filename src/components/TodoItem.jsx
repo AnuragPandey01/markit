@@ -1,46 +1,40 @@
-const TodoItem = ({ todo, onToggle}) => {
-  
-    // Priority color mapping
-    const priorityColors = {
-      High: 'bg-red-100 border-red-400 text-red-800',
-      Medium: 'bg-yellow-100 border-yellow-400 text-yellow-800',
-      Low: 'bg-blue-100 border-blue-400 text-blue-800',
+import { MdOutlineCheck, MdOutlineMoreHoriz, MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
+import { useRef, useEffect } from "react";
+import { useTodoStore } from "../store";
+
+const TodoItem = ({ todo, onToggle, isOptionsOpen, onOptionsToggle, onOptionsClose }) => {
+  const optionsRef = useRef(null);
+
+  const {deleteTodo} = useTodoStore();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+        onOptionsClose();
+      }
     };
-  
-    return (
-      <div 
-        className={`w-full md:w-sm flex items-center justify-between p-4 mb-2 rounded-lg border-l-4 transition-all duration-200 ${
-          priorityColors[todo.priority] || 'bg-gray-100 border-gray-400'
-        } ${todo.is_completed ? 'opacity-70' : ''}`}
-      >
-        <div className="flex items-center space-x-3">
-          {/* Checkbox */}
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              checked={todo.is_completed}
-              onChange={()=>onToggle(todo)}
-              className={`w-5 h-5 rounded border-2 ${
-                todo.is_completed 
-                  ? 'border-green-500 bg-green-500' 
-                  : 'border-gray-300'
-              } focus:ring-0 focus:ring-offset-0 cursor-pointer transition-colors`}
-            />
-          </div>
-  
-          {/* Todo Text */}
-          <span className={`text-lg text-wrap mr-3 ${
-            todo.is_completed 
-              ? 'line-through text-gray-500' 
-              : 'text-gray-800'
-          }`}>
-            {todo.text}
-          </span>
-        </div>
-  
-        <div className="flex items-center space-x-2">
-          {/* Priority Badge */}
-          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+
+    if (isOptionsOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOptionsOpen, onOptionsClose]);
+
+  return <div className={`w-full md:w-xl flex items-center px-4 py-3 relative`}>
+
+    {/* Checkbox */}
+    <div className={`w-5 h-5 rounded border-2 border-black ${todo.is_completed ? 'opacity-60': 'opacity-100'}`} onClick={() => onToggle(todo)}>
+      {todo.is_completed && <MdOutlineCheck/>}
+    </div>  
+
+    <div className={`flex items-center flex-grow px-4 ${todo.is_completed ? 'opacity-60': 'opacity-100'}`}>
+
+      <div className="flex flex-col">
+        <div className={`${todo.is_completed ? 'line-through text-gray-400': ''}`}> {todo.text}</div>
+        <span className={`px-2 py-1 text-xs font-semibold rounded-sm w-min ${
             todo.priority === 'High' 
               ? 'bg-red-200 text-red-800' 
               : todo.priority === 'Medium' 
@@ -49,9 +43,45 @@ const TodoItem = ({ todo, onToggle}) => {
           }`}>
             {todo.priority}
           </span>
-        </div>
-      </div>
-    );
-  };
+      </div>  
 
-  export default TodoItem;
+    </div>
+
+    <div className="relative" ref={optionsRef}>
+      <button 
+        onClick={() => onOptionsToggle(todo.id)}
+        className="p-1 hover:bg-gray-100 rounded-full"
+      >
+        <MdOutlineMoreHoriz/>
+      </button>
+
+      {isOptionsOpen && (
+        <div className="absolute right-0 mt-2 min-w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200">
+          <button 
+            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              // TODO: Implement edit functionality
+              onOptionsClose();
+            }}
+          >
+            <MdOutlineEdit className="mr-2" />
+            Edit
+          </button>
+          <button 
+            className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+            onClick={() => {
+              deleteTodo(todo)
+              onOptionsClose();
+            }}
+          >
+            <MdOutlineDelete className="mr-2" />
+            Delete
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+
+}
+
+export default TodoItem;

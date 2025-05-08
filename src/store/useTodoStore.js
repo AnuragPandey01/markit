@@ -22,7 +22,7 @@ const useTodoStore = create((set) => ({
   },
 
   // Add a new todo
-  addTodo: async (title,priority) => {
+  addTodo: async (title, priority) => {
     const newTodo = {
       user_id: pb.authStore.record.id,
       text: title,
@@ -46,25 +46,39 @@ const useTodoStore = create((set) => ({
     }
   },
 
-  // Mark a todo as done
-  markTodoAsDone: async (id) => {
+  // Toggle todo completion status
+  toggleTodoCompletion: async (it) => {
     set((state) => ({
       todos: state.todos.map((todo) =>
-        todo.id === id ? { ...todo, is_completed: true } : todo
+        todo.id === it.id ? { ...todo, is_completed: !todo.is_completed } : todo
       ),
     })); // Optimistic update
-    console.log()
     try {
-      await pb.collection("todo").update(id, { is_completed: true });
+      await pb.collection("todo").update(it.id, { is_completed: !it.is_completed });
     } catch (err) {
       set((state) => ({
         todos: state.todos.map((todo) =>
-          todo.id === id ? { ...todo, is_completed: false } : todo
+          todo.id === it.id ? { ...todo, is_completed: !it.is_completed } : todo
         ),
         error: err.message,
       }));
     }
   },
+
+  deleteTodo: async (it) => {
+
+    set((state) => ({
+      todos: state.todos.filter((todo) => todo.id != it.id )
+    }));
+    try{
+      await pb.collection("todo").delete(it.id);
+    }catch(err){
+      set((state) => ({
+        todos: state.todos.push(it)
+      }));
+    }
+  }
+
 }));
 
 export default useTodoStore;
