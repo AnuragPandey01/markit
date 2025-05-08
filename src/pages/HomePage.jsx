@@ -101,14 +101,14 @@ const HomePage = () => {
             <Button text="+" className="aspect-square rounded-md! ms-2 text-white font-bold" onClick={() => setAddTodoModalOpen(true)} />
         </div>
         {addTodoModalOpen && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black /70 z-50">
+            <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50 px-4">
                 <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
                     <h3 className="text-xl font-semibold mb-4">Add New Todo</h3>
                     <input
                         placeholder="enter todo"
                         value={newTodo.title}
                         onChange={(e) => setNewTodo({ title: e.target.value, priority: newTodo.priority })}
-                        className="w-full outline-none bg-transparent text-md border-gray-400 border-2 focus:border-blue-400 rounded-md px-2 py-2 mb-4"
+                        className="w-full outline-none bg-transparent text-md border-gray-100 border-2 focus:border-blue-400 rounded-md px-2 py-2 mb-4"
                     />
                     <PriorityDropdown
                         selectedPriority={newTodo.priority}
@@ -116,9 +116,9 @@ const HomePage = () => {
                             setNewTodo({ ...newTodo, priority: it });
                         }}
                     />
-                    <div className="flex justify-end mt-4 gap-2">
-                        <Button onClick={handleCancelTodoAdd} className="px-4" text="Cancel" />
-                        <Button onClick={handleAddTodo} className="px-4" text="Add Todo" />
+                    <div className="flex justify-end items-center mt-4 gap-2">
+                        <p onClick={handleCancelTodoAdd} className="px-4">cancel</p>
+                        <p onClick={handleAddTodo} className="text-blue-400 font-bold">Done</p>
                     </div>
                 </div>
             </div>
