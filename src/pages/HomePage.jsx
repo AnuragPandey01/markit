@@ -1,4 +1,4 @@
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { Button, Spinner, TodoItem, PriorityDropdown } from "../components";
 import { useTodoStore, useAuthStore } from "../store"
 import { toast } from "react-toastify"
@@ -21,10 +21,19 @@ const HomePage = () => {
 
     const [addTodoModalOpen, setAddTodoModalOpen] = useState(false);
 
-    const { filteredTodo: todos, loading, error, fetchTodos, addTodo, toggleTodoCompletion, filterTodo } = useTodoStore()
+    const { todos, loading, error, fetchTodos, addTodo, toggleTodoCompletion } = useTodoStore()
+
+    const [filteredTodos, setFilteredTodos] = useState([]);
+
     const { logout } = useAuthStore();
 
     const [searchQuery, setSearchQuery] = useState("");
+
+    useEffect(() => {
+        setFilteredTodos(
+            todos.filter((todo) => ((todo.priority === selectedFilter || selectedFilter === "All") && todo.text.includes(searchQuery)))
+        )
+    }, [todos, searchQuery, selectedFilter])
 
     useEffect(() => {
         fetchTodos();
@@ -35,18 +44,11 @@ const HomePage = () => {
     }, [error])
 
     const handleSearchQueryChange = (e) => {
-        const query = e.target.value;
-        setSearchQuery(query);
-        
-        setTimeout(() => {
-            filterTodo(selectedFilter, query);
-        }, 500);            
+        setSearchQuery(e.target.value);
     };
 
     const handleFilterChange = (e) => {
-        const priorityQuery = e.target.innerText;
-        setSelectedFilter(priorityQuery);
-        filterTodo(priorityQuery, searchQuery);
+        setSelectedFilter(e.target.innerText);
     };
 
     const handleAddTodo = () => {
@@ -74,12 +76,12 @@ const HomePage = () => {
         setOpenOptionsId(null);
     };
 
-    
+
 
     return <div className="flex flex-col items-center md:justify-center">
         <h2 className="text-2xl font-semibold mb-4" onClick={logout}>Mark it</h2>
         <div className="w-full md:w-sm flex mb-4">
-            <SearchBar placeholder="Search todo" className="w-full" onChange ={handleSearchQueryChange} value={searchQuery} />
+            <SearchBar placeholder="Search todo" className="w-full" onChange={handleSearchQueryChange} value={searchQuery} />
             <Button text="+" className="w-10 rounded-md! ms-2 text-white font-bold" onClick={() => setAddTodoModalOpen(true)} />
         </div>
         {addTodoModalOpen && (
@@ -131,7 +133,7 @@ const HomePage = () => {
 
         {loading && <Spinner />}
 
-        {!loading && todos.map((todo) => (
+        {!loading && filteredTodos.map((todo) => (
             <TodoItem
                 key={todo.id}
                 todo={todo}
