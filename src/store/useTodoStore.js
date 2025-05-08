@@ -6,6 +6,7 @@ const useTodoStore = create((set) => ({
   loading: false,
   error: null,
 
+  filteredTodo: [],
 
   fetchTodos: async (priority = "All") => {
     set({ loading: true });
@@ -15,7 +16,7 @@ const useTodoStore = create((set) => ({
           ? `user_id = "${pb.authStore.model.id}"`
           : `user_id = "${pb.authStore.model.id}" && priority = "${priority}"`;
       const res = await pb.collection("todo").getList(1, 30, { filter });
-      set({ todos: res.items, loading: false });
+      set({ todos: res.items, loading: false, filteredTodo: res.items});
     } catch (err) {
       set({ error: err.message, loading: false });
     }
@@ -77,6 +78,14 @@ const useTodoStore = create((set) => ({
         todos: state.todos.push(it)
       }));
     }
+  },
+
+  filterTodo: (priority="All",searchQuery="") => {
+    set((state) => (
+      {
+        filteredTodo: state.todos.filter((todo) => ((todo.priority == priority || priority === "All") && todo.text.includes(searchQuery)))
+      }
+    ));
   }
 
 }));
