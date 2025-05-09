@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Button, Spinner, TodoItem, FilterDropdown, EditTodoModal, SearchBar } from "../components";
+import { Button, Spinner, TodoItem, FilterDropdown, EditTodoModal, SearchBar, TaskProgress } from "../components";
 import { useTodoStore, useAuthStore } from "../store"
 import { toast } from "react-toastify"
+import { PiUserRectangle } from "react-icons/pi";
 
 const HomePage = () => {
 
@@ -15,11 +16,14 @@ const HomePage = () => {
         title: "",
         priority: "Low"
     });
+
     const [openOptionsId, setOpenOptionsId] = useState(null);
 
     const [addTodoModalOpen, setAddTodoModalOpen] = useState(false);
 
     const { todos, loading, error, fetchTodos, addTodo, toggleTodoCompletion, updateTodo } = useTodoStore()
+
+    const percentage = todos.length > 0 ? (todos.filter(todo => todo.is_completed).length / todos.length) * 100 : 0
 
     const [filteredTodos, setFilteredTodos] = useState([]);
 
@@ -63,7 +67,7 @@ const HomePage = () => {
     };
 
     const handleAddTodo = (newTodo) => {
-        if(newTodo.user_id) updateTodo(newTodo);
+        if (newTodo.user_id) updateTodo(newTodo);
         else addTodo(newTodo.title, newTodo.priority);
         setNewTodo({
             title: "",
@@ -95,7 +99,10 @@ const HomePage = () => {
 
     return <div className="flex flex-col items-center px-4">
         <h2 className="text-2xl font-semibold mb-4" onClick={logout}>Mark it</h2>
-        <div className="w-full md:w-sm flex mb-4">
+
+        {todos.length > 0 && <TaskProgress percentage={percentage}/>}
+
+        <div className="w-full md:w-lg flex mb-4">
             <SearchBar placeholder="Search todo" className="w-full" onChange={handleSearchQueryChange} value={searchQuery} />
             <Button text="+" className="aspect-square rounded-md! ms-2 text-white font-bold" onClick={() => setAddTodoModalOpen(true)} />
         </div>
