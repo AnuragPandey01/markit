@@ -26,7 +26,7 @@ const TodoItem = ({ todo, onToggle, isOptionsOpen, onOptionsToggle, onOptionsClo
   return <div className={`flex items-center`}>
 
     {/* Checkbox */}
-    <div className={`w-5 h-5 rounded border-2 border-black ${todo.is_completed ? 'opacity-60': 'opacity-100'}`} onClick={() => onToggle(todo)}>
+    <div className={`w-5 h-5 rounded border-2 cursor-pointer border-black ${todo.is_completed ? 'opacity-60': 'opacity-100'}`} onClick={() => onToggle(todo)}>
       {todo.is_completed && <MdOutlineCheck/>}
     </div>  
 
@@ -50,7 +50,7 @@ const TodoItem = ({ todo, onToggle, isOptionsOpen, onOptionsToggle, onOptionsClo
     <div className="relative" ref={optionsRef}>
       <button 
         onClick={() => onOptionsToggle(todo.id)}
-        className="p-1 hover:bg-gray-100 rounded-full"
+        className="p-1 hover:bg-gray-100 rounded-full cursor-pointer"
       >
         <MdOutlineMoreHoriz/>
       </button>
