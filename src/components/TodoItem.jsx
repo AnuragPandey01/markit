@@ -2,7 +2,7 @@ import { MdOutlineCheck, MdOutlineMoreHoriz, MdOutlineDelete, MdOutlineEdit } fr
 import { useRef, useEffect } from "react";
 import { useTodoStore } from "../store";
 
-const TodoItem = ({ todo, onToggle, isOptionsOpen, onOptionsToggle, onOptionsClose }) => {
+const TodoItem = ({ todo, onToggle, isOptionsOpen, onOptionsToggle, onOptionsClose,onEditClick }) => {
   const optionsRef = useRef(null);
 
   const {deleteTodo} = useTodoStore();
@@ -33,7 +33,7 @@ const TodoItem = ({ todo, onToggle, isOptionsOpen, onOptionsToggle, onOptionsClo
     <div className={`flex items-center flex-grow px-4 ${todo.is_completed ? 'opacity-60': 'opacity-100'}`}>
 
       <div className="flex flex-col">
-        <div className={`${todo.is_completed ? 'line-through text-gray-400': ''}`}> {todo.text}</div>
+        <div className={`${todo.is_completed ? 'line-through text-gray-400': ''}`}> {todo.title}</div>
         <span className={`px-2 py-1 text-xs font-semibold rounded-sm w-min ${
             todo.priority === 'High' 
               ? 'bg-red-200 text-red-800' 
@@ -60,7 +60,7 @@ const TodoItem = ({ todo, onToggle, isOptionsOpen, onOptionsToggle, onOptionsClo
           <button 
             className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             onClick={() => {
-              // TODO: Implement edit functionality
+              onEditClick()
               onOptionsClose();
             }}
           >

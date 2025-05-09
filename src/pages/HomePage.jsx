@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
-import { Button, Spinner, TodoItem, PriorityDropdown, FilterDropdown } from "../components";
+import { Button, Spinner, TodoItem, FilterDropdown, EditTodoModal, SearchBar } from "../components";
 import { useTodoStore, useAuthStore } from "../store"
 import { toast } from "react-toastify"
-import { SearchBar, FilterButton } from "../components";
 
 const HomePage = () => {
 
     const priorityFilters = ["Low", "Medium", "High"];
-    const statusFilters = ["pending","completed"]
+    const statusFilters = ["pending", "completed"]
 
     const [selectedPriorityFilter, setSelectedPriorityFilter] = useState(null);
     const [selectedStatusFilter, setSelectedStatusFilter] = useState(null);
-  
+
     const [newTodo, setNewTodo] = useState({
         title: "",
         priority: "Low"
@@ -20,7 +19,7 @@ const HomePage = () => {
 
     const [addTodoModalOpen, setAddTodoModalOpen] = useState(false);
 
-    const { todos, loading, error, fetchTodos, addTodo, toggleTodoCompletion } = useTodoStore()
+    const { todos, loading, error, fetchTodos, addTodo, toggleTodoCompletion, updateTodo } = useTodoStore()
 
     const [filteredTodos, setFilteredTodos] = useState([]);
 
@@ -33,7 +32,7 @@ const HomePage = () => {
     };
 
     const filterBySearch = (todo) => {
-        return todo.text.toLowerCase().includes(searchQuery.toLowerCase());
+        return todo.title.toLowerCase().includes(searchQuery.toLowerCase());
     };
 
     const filterByStatus = (todo) => {
@@ -43,9 +42,9 @@ const HomePage = () => {
 
     useEffect(() => {
         setFilteredTodos(
-            todos.filter(todo => 
-                filterByPriority(todo) && 
-                filterBySearch(todo) && 
+            todos.filter(todo =>
+                filterByPriority(todo) &&
+                filterBySearch(todo) &&
                 filterByStatus(todo)
             )
         );
@@ -63,12 +62,9 @@ const HomePage = () => {
         setSearchQuery(e.target.value);
     };
 
-    const handleFilterChange = (e) => {
-        setSelectedPriorityFilter(e.target.innerText);
-    };
-
-    const handleAddTodo = () => {
-        addTodo(newTodo.title, newTodo.priority);
+    const handleAddTodo = (newTodo) => {
+        if(newTodo.user_id) updateTodo(newTodo);
+        else addTodo(newTodo.title, newTodo.priority);
         setNewTodo({
             title: "",
             priority: "Low"
@@ -92,7 +88,10 @@ const HomePage = () => {
         setOpenOptionsId(null);
     };
 
-
+    const handleTodoEditClick = (todo) => {
+        setNewTodo(todo);
+        setAddTodoModalOpen(true);
+    }
 
     return <div className="flex flex-col items-center px-4">
         <h2 className="text-2xl font-semibold mb-4" onClick={logout}>Mark it</h2>
@@ -100,29 +99,14 @@ const HomePage = () => {
             <SearchBar placeholder="Search todo" className="w-full" onChange={handleSearchQueryChange} value={searchQuery} />
             <Button text="+" className="aspect-square rounded-md! ms-2 text-white font-bold" onClick={() => setAddTodoModalOpen(true)} />
         </div>
-        {addTodoModalOpen && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50 px-4">
-                <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-                    <h3 className="text-xl font-semibold mb-4">Add New Todo</h3>
-                    <input
-                        placeholder="enter todo"
-                        value={newTodo.title}
-                        onChange={(e) => setNewTodo({ title: e.target.value, priority: newTodo.priority })}
-                        className="w-full outline-none bg-transparent text-md border-gray-100 border-2 focus:border-blue-400 rounded-md px-2 py-2 mb-4"
-                    />
-                    <PriorityDropdown
-                        selectedPriority={newTodo.priority}
-                        onSelect={(it) => {
-                            setNewTodo({ ...newTodo, priority: it });
-                        }}
-                    />
-                    <div className="flex justify-end items-center mt-4 gap-2">
-                        <p onClick={handleCancelTodoAdd} className="px-4">cancel</p>
-                        <p onClick={handleAddTodo} className="text-blue-400 font-bold">Done</p>
-                    </div>
-                </div>
-            </div>
-        )}
+
+        {addTodoModalOpen &&
+            <EditTodoModal
+                todo={newTodo}
+                onCancelClick={handleCancelTodoAdd}
+                onDone={handleAddTodo}
+            />
+        }
 
         <div className="flex w-full md:w-xl gap-4">
             <FilterDropdown
@@ -130,7 +114,7 @@ const HomePage = () => {
                 onItemClick={setSelectedPriorityFilter}
                 items={priorityFilters}
                 selectedItem={selectedPriorityFilter}
-                onClear={()=>{setSelectedPriorityFilter(null)}}
+                onClear={() => { setSelectedPriorityFilter(null) }}
             />
 
             <FilterDropdown
@@ -138,7 +122,7 @@ const HomePage = () => {
                 onItemClick={setSelectedStatusFilter}
                 items={statusFilters}
                 selectedItem={selectedStatusFilter}
-                onClear={()=>{setSelectedStatusFilter(null)}}
+                onClear={() => { setSelectedStatusFilter(null) }}
             />
 
         </div>
@@ -148,12 +132,13 @@ const HomePage = () => {
         <div className="flex flex-col gap-4 mt-4 w-full md:w-xl">
             {!loading && filteredTodos.map((todo) => (
                 <TodoItem
-                    key={todo.id}
+                    key={todo.id || todo.tempId}
                     todo={todo}
                     onToggle={() => { toggleTodoCompletion(todo) }}
                     isOptionsOpen={openOptionsId === todo.id}
                     onOptionsToggle={handleOptionsToggle}
                     onOptionsClose={handleOptionsClose}
+                    onEditClick={() => handleTodoEditClick(todo)}
                 />
             ))}
         </div>

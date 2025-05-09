@@ -18,7 +18,6 @@ function FilterDropdown({ title, items, selectedItem,onItemClick,onClear }) {
     return (
         <div className="cursor-pointer text-sm">
             <div className={`flex items-end px-4 py-1 border-2 ${selectedItem ? 'border-blue-400' : 'border-gray-200' }  rounded-sm`} onClick={selectedItem ? onClear : toggleDropDown}>
-                {console.log(title)}
                 {selectedItem ? selectedItem : title}
                 {selectedItem ? <MdOutlineClose size={16} className="ms-1 text-blue-400"/> : <MdOutlineKeyboardArrowDown size={16} className="ms-1" />}
                 

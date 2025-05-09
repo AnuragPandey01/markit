@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import pb from "../lib/pb";
 
-const useTodoStore = create((set) => ({
+const useTodoStore = create((set, get) => ({
   todos: [], // Initial state for todos
   loading: false,
   error: null,
@@ -24,7 +24,7 @@ const useTodoStore = create((set) => ({
   addTodo: async (title, priority) => {
     const newTodo = {
       user_id: pb.authStore.record.id,
-      text: title,
+      title: title,
       priority: priority,
       is_completed: false,
       tempId: Date.now(),
@@ -67,17 +67,34 @@ const useTodoStore = create((set) => ({
   deleteTodo: async (it) => {
 
     set((state) => ({
-      todos: state.todos.filter((todo) => todo.id != it.id )
+      todos: state.todos.filter((todo) => todo.id != it.id)
     }));
-    try{
+    try {
       await pb.collection("todo").delete(it.id);
-    }catch(err){
+    } catch (err) {
       set((state) => ({
         todos: [...state.todos, it],
         error: err.message
       }));
     }
   },
+
+  updateTodo : async (it) => {
+
+    const oldTodo = get().todos.filter((todo) => (todo.id === it.id));
+
+    set((state) => ({
+      todos: state.todos.map((todo) => (it.id === todo.id ? it : todo))
+    }));
+    try{
+      await pb.collection("todo").update(it.id,it);
+    }catch(err){
+      set((state) => ({
+        todo: state.todos.map((todo) => (it.id === todo.id ? oldTodo : todo)),
+        error: err.message
+      }));
+    }
+  }
 
 }));
 
