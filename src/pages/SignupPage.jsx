@@ -1,14 +1,16 @@
 import { MdOutlineMailOutline, MdOutlinePassword, MdPersonOutline } from "react-icons/md";
 import InputField from "../components/InputField";
 import { useEffect, useState } from "react";
-import {toast} from "react-toastify"
-import { Button, Spinner} from "../components"
+import { toast } from "react-toastify"
+import { Button, Spinner, HorizontalDivider } from "../components"
 import { useAuthStore } from "../store";
 import { useNavigate } from "react-router-dom";
+import GoogleAuthButton from "../components/GoogleAuthButton";
+
 
 const SignupPage = () => {
 
-    const {loading, error, signup} = useAuthStore();
+    const { loading, error, signup, googleAuth } = useAuthStore();
     const navigate = useNavigate();
 
     const [form, setForm] = useState(
@@ -38,9 +40,9 @@ const SignupPage = () => {
         signup(data);
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         toast.error(error)
-    },[error])
+    }, [error])
 
     return <div className="flex items-center">
         {/* Left Half with Background Image */}
@@ -96,6 +98,10 @@ const SignupPage = () => {
 
                 {loading && <Spinner />}
                 {!loading && <Button onClick={register} text={"Register"} />}
+
+                <HorizontalDivider/>    
+                
+                <GoogleAuthButton onClick={googleAuth} />
 
                 <div className="text-center pt-12 pb-12">
                     <p>Already have an account? <a onClick={() => navigate("/login")} className="underline font-semibold cursor-pointer">Log in here.</a></p>

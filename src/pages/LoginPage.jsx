@@ -2,13 +2,14 @@ import { useEffect, useState } from "react"
 import InputField from "../components/InputField"
 import { MdOutlineMailOutline, MdOutlinePassword } from "react-icons/md"
 import {toast} from "react-toastify"
-import { Button , Spinner} from "../components"
+import { Button , HorizontalDivider, Spinner} from "../components"
 import { useAuthStore } from "../store"
 import { useNavigate } from "react-router-dom"
+import GoogleAuthButton from "../components/GoogleAuthButton"
 
 const LoginPage = () => {
 
-    const {loading, error, login} = useAuthStore();
+    const {loading, error, login, googleAuth} = useAuthStore();
     const navigate = useNavigate();
 
     const [form, setForm] = useState(
@@ -62,6 +63,10 @@ const LoginPage = () => {
                     onClick={handleLogin}
                     text={"Login"}
                 />}
+
+                <HorizontalDivider/>    
+                
+                <GoogleAuthButton onClick={googleAuth} />
 
                 <div className="text-center pt-12 pb-12">
                     <p>Don't have an account? <a onClick={() => navigate("/")} className="underline font-semibold cursor-pointer">Sign up here.</a></p>

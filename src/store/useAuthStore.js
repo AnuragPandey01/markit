@@ -30,6 +30,16 @@ const useAuthStore = create((set) => ({
     logout : () => {
         pb.authStore.clear();
         set({authenticated:false});
+    },
+
+    googleAuth : async () => {
+        try{
+            const authData = await pb.collection('users').authWithOAuth2({ provider: 'google' });
+            console.log(authData);
+            set({authenticated: pb.authStore.isValid});
+        }catch(err){
+            set({error: err.message});
+        }
     }
 }));
 
