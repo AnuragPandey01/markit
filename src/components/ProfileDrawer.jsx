@@ -84,16 +84,16 @@ const ProfileDrawer = ({ onClose }) => {
                 }
 
                 {!loading && 
-                    <button disabled={!hasChanges} className={`w-full ${hasChanges ? 'bg-blue-400' : 'bg-blue-200' } text-white rounded-md py-2 mt-4`} onClick={handleUpdateProfile}>
+                    <button disabled={!hasChanges} className={`w-full ${hasChanges ? 'bg-blue-400' : 'bg-blue-200' } text-white rounded-md py-2 mt-4c cursor-pointer`} onClick={handleUpdateProfile}>
                     save changes
                 </button>
                 }
                 
 
-                <button className={`w-full text-red-400 border-1 border-red-400 rounded-md py-2 mt-4 hover:bg-red-400 hover:text-white`} onClick={logout}>
+                <button className={`w-full text-red-400 border-1 border-red-400 rounded-md py-2 mt-4 hover:bg-red-400 hover:text-white cursor-pointer`} onClick={logout}>
                     Log out
                 </button>
-            </div>
+            </div>  
         </div>
     );
 };

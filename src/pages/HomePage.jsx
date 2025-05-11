@@ -117,17 +117,16 @@ const HomePage = () => {
     return <div className="flex flex-col items-center px-4">
 
         <div className="flex justify-between w-full md:w-xl mb-6 items-center">
-            <h2 className="text-2xl font-semibold " onClick={logout}>
+            <h2 className="text-2xl font-semibold ">
                 <span className="text-blue-400">M</span>
                 <span>ark</span>
-                <span className="text-blue-400">i</span>t</h2>
-            <div className="relative">
-                <img
-                    src={avatar}
-                    className="rounded-full h-8 w-8 border-blue-400 border-2 cursor-pointer"
-                    onClick={() => setIsProfileDrawerOpen(true)}
-                />
-            </div>
+                <span className="text-blue-400">i</span>t
+            </h2>
+            <img
+                src={avatar}
+                className="rounded-full h-8 w-8 border-blue-400 border-2 cursor-pointer"
+                onClick={() => setIsProfileDrawerOpen(true)}
+            />
         </div>
 
         {todos.length > 0 && <TaskProgress percentage={percentage} />}
@@ -180,7 +179,7 @@ const HomePage = () => {
             ))}
         </div>
 
-        {isProfileDrawerOpen && 
+        {isProfileDrawerOpen &&
             <ProfileDrawer
                 onClose={() => setIsProfileDrawerOpen(false)}
             />
