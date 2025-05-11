@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { Button, Spinner, TodoItem, FilterDropdown, EditTodoModal, SearchBar, TaskProgress } from "../components";
+import { Button, Spinner, TodoItem, FilterDropdown, EditTodoModal, SearchBar, TaskProgress, ProfileDrawer } from "../components";
 import { useTodoStore, useAuthStore } from "../store"
 import { toast } from "react-toastify"
-import { PiUserRectangle } from "react-icons/pi";
 
 const HomePage = () => {
 
@@ -27,9 +26,11 @@ const HomePage = () => {
 
     const [filteredTodos, setFilteredTodos] = useState([]);
 
-    const { logout } = useAuthStore();
+    const { logout, email, firstName, lastName, avatar } = useAuthStore();
 
     const [searchQuery, setSearchQuery] = useState("");
+
+    const [isProfileDrawerOpen, setIsProfileDrawerOpen] = useState(false);
 
     const filterByPriority = (todo) => {
         return !selectedPriorityFilter || todo.priority === selectedPriorityFilter;
@@ -98,9 +99,22 @@ const HomePage = () => {
     }
 
     return <div className="flex flex-col items-center px-4">
-        <h2 className="text-2xl font-semibold mb-4" onClick={logout}>Mark it</h2>
 
-        {todos.length > 0 && <TaskProgress percentage={percentage}/>}
+        <div className="flex justify-between w-full md:w-xl mb-6 items-center">
+            <h2 className="text-2xl font-semibold " onClick={logout}>
+                <span className="text-blue-400">M</span>
+                <span>ark</span>
+                <span className="text-blue-400">i</span>t</h2>
+            <div className="relative">
+                <img
+                    src={avatar}
+                    className="rounded-full h-8 w-8 border-blue-400 border-2 cursor-pointer"
+                    onClick={() => setIsProfileDrawerOpen(true)}
+                />
+            </div>
+        </div>
+
+        {todos.length > 0 && <TaskProgress percentage={percentage} />}
 
         <div className="w-full md:w-lg flex mb-4">
             <SearchBar placeholder="Search todo" className="w-full" onChange={handleSearchQueryChange} value={searchQuery} />
@@ -149,6 +163,12 @@ const HomePage = () => {
                 />
             ))}
         </div>
+
+        {isProfileDrawerOpen && 
+            <ProfileDrawer
+                onClose={() => setIsProfileDrawerOpen(false)}
+            />
+        }
 
     </div>
 }

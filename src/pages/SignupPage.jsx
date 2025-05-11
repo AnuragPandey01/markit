@@ -96,12 +96,12 @@ const SignupPage = () => {
                     <span className="pl-5">I agree to all terms</span>
                 </div>
 
-                {loading && <Spinner />}
-                {!loading && <Button onClick={register} text={"Register"} />}
+                {loading.signup && <Spinner />}
+                {!loading.signup && <Button onClick={register} text={"Register"} />}
 
                 <HorizontalDivider/>    
                 
-                <GoogleAuthButton onClick={googleAuth} />
+                <GoogleAuthButton onClick={googleAuth} disabled={loading.googleAuth} />
 
                 <div className="text-center pt-12 pb-12">
                     <p>Already have an account? <a onClick={() => navigate("/login")} className="underline font-semibold cursor-pointer">Log in here.</a></p>

@@ -1,13 +1,10 @@
-const InputField = ({ name, type, placeholder, icon: Icon, value, onChange }) => (
-  <div className="group border-1 rounded-xl inline-flex items-center pl-5 pr-5 pt-3 pb-3 focus-within:border-blue-500 focus-within:border-3 transition-colors">
-    <Icon className="inline-flex text-2xl group-focus-within:text-blue-500 transition-colors" />
+
+const InputField = ({ className, icon: Icon, ...props }) => (
+  <div className={`group border-gray-200 border-2 rounded-md inline-flex items-center pl-5 pr-5 pt-3 pb-3 focus-within:border-blue-300 focus-within:border-3 transition-colors ${className}`}>
+    {Icon && <Icon className="inline-flex text-2xl mr-2 group-focus-within:text-blue-300 transition-colors" />}
     <input
-      type={type}
-      placeholder={placeholder}
-      name={name}
-      value={value}
-      onChange={onChange}
-      className="outline-none bg-transparent pl-5 w-full"
+      {...props}
+      className="outline-none bg-transparent w-full"
     />
   </div>
 );

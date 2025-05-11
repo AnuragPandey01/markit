@@ -12,7 +12,11 @@ function App() {
 
   const navigate = useNavigate();
 
-  const {authenticated} = useAuthStore()
+  const { authenticated, init } = useAuthStore()
+
+  useEffect(() => {
+    init();
+  }, []);
 
   useEffect(() => {
     if (authenticated) navigate("/home");

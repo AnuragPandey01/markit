@@ -58,15 +58,15 @@ const LoginPage = () => {
                     value={form.password}
                     onChange={handleChange}
                 />
-                {loading && <Spinner />}
-                {!loading && <Button
+                {loading.login && <Spinner />}
+                {!loading.login && <Button
                     onClick={handleLogin}
                     text={"Login"}
                 />}
 
                 <HorizontalDivider/>    
                 
-                <GoogleAuthButton onClick={googleAuth} />
+                <GoogleAuthButton onClick={googleAuth} disabled={loading.googleAuth} />
 
                 <div className="text-center pt-12 pb-12">
                     <p>Don't have an account? <a onClick={() => navigate("/")} className="underline font-semibold cursor-pointer">Sign up here.</a></p>
