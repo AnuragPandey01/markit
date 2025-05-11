@@ -37,10 +37,10 @@ const HomePage = () => {
 
     const [filteredTodos, setFilteredTodos] = useState([]);
 
-    const { logout, avatar } = useAuthStore(
+    const { avatar, firstName } = useAuthStore(
         useShallow((state) => ({
-            logout: state.logout,
-            avatar: state.avatar
+            avatar: state.avatar,
+            firstName: state.firstName ? state.firstName : ""
         }))
     )
 
@@ -129,11 +129,20 @@ const HomePage = () => {
             />
         </div>
 
-        {todos.length > 0 && <TaskProgress percentage={percentage} />}
+        
 
-        <div className="w-full md:w-lg flex mb-4">
-            <SearchBar placeholder="Search todo" className="w-full" onChange={handleSearchQueryChange} value={searchQuery} />
-            <Button text="+" className="aspect-square rounded-md! ms-2 text-white font-bold" onClick={() => setAddTodoModalOpen(true)} />
+        <div className="w-full md:w-xl flex flex-col gap-4 mb-4">
+        {todos.length > 0 && <TaskProgress percentage={percentage} />}
+            <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Hi, {firstName}👋</h3>
+                {todos.length > 0 && <Button onClick={() => {setAddTodoModalOpen(true)}} text="Add new Todo" className="px-2"/>}
+            </div>
+            <SearchBar 
+                placeholder="Search tasks..." 
+                className="w-full" 
+                onChange={handleSearchQueryChange} 
+                value={searchQuery} 
+            />
         </div>
 
         {addTodoModalOpen &&
@@ -166,17 +175,30 @@ const HomePage = () => {
         {loading && <Spinner />}
 
         <div className="flex flex-col gap-4 mt-4 w-full md:w-xl">
-            {!loading && filteredTodos.map((todo) => (
-                <TodoItem
-                    key={todo.id || todo.tempId}
-                    todo={todo}
-                    onToggle={() => { toggleTodoCompletion(todo) }}
-                    isOptionsOpen={openOptionsId === todo.id}
-                    onOptionsToggle={handleOptionsToggle}
-                    onOptionsClose={handleOptionsClose}
-                    onEditClick={() => handleTodoEditClick(todo)}
-                />
-            ))}
+            {!loading && todos.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 px-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                    <span className="text-4xl mb-4">✨</span>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No tasks yet!</h3>
+                    <p className="text-gray-500 text-center mb-4">Start by adding your first task to get organized</p>
+                    <Button 
+                        onClick={() => setAddTodoModalOpen(true)} 
+                        text="Add your first task" 
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                    />
+                </div>
+            ) : (
+                filteredTodos.map((todo) => (
+                    <TodoItem
+                        key={todo.id || todo.tempId}
+                        todo={todo}
+                        onToggle={() => { toggleTodoCompletion(todo) }}
+                        isOptionsOpen={openOptionsId === todo.id}
+                        onOptionsToggle={handleOptionsToggle}
+                        onOptionsClose={handleOptionsClose}
+                        onEditClick={() => handleTodoEditClick(todo)}
+                    />
+                ))
+            )}
         </div>
 
         {isProfileDrawerOpen &&

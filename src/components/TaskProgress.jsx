@@ -13,7 +13,7 @@ function TaskProgress(
     };
 
     return (
-        <div className="w-full md:w-lg text-sm mb-4">
+        <div className="text-sm">
             <div>{getMessage(percentage)}</div>
             <div className="rounded-full h-2 bg-gray-100 my-2">
                 <div className="bg-blue-400 h-1.5 rounded-full transition-all" style={{ width: `${percentage}%` }}></div>

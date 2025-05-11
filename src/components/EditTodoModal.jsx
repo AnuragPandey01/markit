@@ -30,7 +30,7 @@ function EditTodoModal(
                     }}
                 />
                 <div className="flex justify-end items-center mt-4 gap-2">
-                    <p onClick={onCancelClick} className="px-4 cursor-pointer">cancel</p>
+                    <p onClick={onCancelClick} className="px-4 cursor-pointer">Cancel</p>
                     <p onClick={() => onDone(newTodo)} className="text-blue-400 font-bold cursor-pointer">Done</p>
                 </div>
             </div>

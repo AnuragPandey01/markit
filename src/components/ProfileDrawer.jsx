@@ -53,10 +53,10 @@ const ProfileDrawer = ({ onClose }) => {
                 <img src={avatar} alt="avatar" className="mx-auto rounded-full w-14 md:w-20 aspect-square my-4" />
 
                 <InputField
-                    className="w-full"
+                    className="w-full cursor-not-allowed"
                     placeholder="Email"
                     value={email}
-                    disabled
+                    disabled = {true}
                 />
 
                 <div className="flex gap-2 items-center text-xs text-gray-400">
@@ -64,7 +64,7 @@ const ProfileDrawer = ({ onClose }) => {
                     <p>You can't change email</p>
                 </div>
 
-                <div className="flex gap-2 mt-4">
+                <div className="flex gap-2 mt-4 mb-4">
                     <InputField
                         placeholder="First Name"
                         value={updateForm.firstName}
