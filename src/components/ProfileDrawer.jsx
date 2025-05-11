@@ -2,10 +2,21 @@ import { MdOutlineClose, MdOutlineInfo } from "react-icons/md";
 import { InputField, Spinner } from ".";
 import { useAuthStore } from "../store";
 import { useEffect, useState } from "react";
+import { useShallow } from 'zustand/react/shallow';
 
 const ProfileDrawer = ({ onClose }) => {
 
-    const { firstName, lastName, email, avatar, logout, loading , updateProfile} = useAuthStore();
+    const { firstName, lastName, email, avatar, logout, loading, updateProfile } = useAuthStore(
+        useShallow((state) => ({
+            firstName: state.firstName,
+            lastName: state.lastName,
+            email: state.email,
+            avatar: state.avatar,
+            logout: state.logout,
+            loading: state.loading.updateProfile,
+            updateProfile: state.updateProfile
+        }))
+    );
 
     const [hasChanges, setHasChanges] = useState(false);
 
@@ -68,11 +79,11 @@ const ProfileDrawer = ({ onClose }) => {
                     />
                 </div>
 
-                {loading.updateProfile && 
+                {loading && 
                     <Spinner className="mx-auto mt-4"/>
                 }
 
-                {!loading.updateProfile && 
+                {!loading && 
                     <button disabled={!hasChanges} className={`w-full ${hasChanges ? 'bg-blue-400' : 'bg-blue-200' } text-white rounded-md py-2 mt-4`} onClick={handleUpdateProfile}>
                     save changes
                 </button>

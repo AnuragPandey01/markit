@@ -1,11 +1,14 @@
 import { MdOutlineCheck, MdOutlineMoreHoriz, MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
 import { useRef, useEffect } from "react";
 import { useTodoStore } from "../store";
+import { useShallow } from 'zustand/react/shallow';
 
-const TodoItem = ({ todo, onToggle, isOptionsOpen, onOptionsToggle, onOptionsClose,onEditClick }) => {
+const TodoItem = ({ todo, onToggle, isOptionsOpen, onOptionsToggle, onOptionsClose, onEditClick }) => {
   const optionsRef = useRef(null);
 
-  const {deleteTodo} = useTodoStore();
+  const deleteTodo = useTodoStore(
+    useShallow((state) => state.deleteTodo)
+  );
 
   useEffect(() => {
     const handleClickOutside = (event) => {

@@ -13,7 +13,7 @@ const useAuthStore = create((set) => ({
         updateProfile: false
     },
     error: null,
-    authenticated: pb.authStore.record.isValid,
+    authenticated: false,
     avatar: null,
     firstName: null,
     lastName: null,
@@ -95,7 +95,7 @@ const useAuthStore = create((set) => ({
                 firstName: meta.rawUser.given_name, 
                 lastName: meta.rawUser.family_name, 
                 email: meta.email, 
-                avatar: _getAvatar(record), 
+                avatar: _getAvatar(authData.record), 
                 authenticated: true
             }))
         } catch (err) {

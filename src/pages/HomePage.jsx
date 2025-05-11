@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Spinner, TodoItem, FilterDropdown, EditTodoModal, SearchBar, TaskProgress, ProfileDrawer } from "../components";
 import { useTodoStore, useAuthStore } from "../store"
 import { toast } from "react-toastify"
+import { useShallow } from 'zustand/react/shallow'
 
 const HomePage = () => {
 
@@ -20,13 +21,28 @@ const HomePage = () => {
 
     const [addTodoModalOpen, setAddTodoModalOpen] = useState(false);
 
-    const { todos, loading, error, fetchTodos, addTodo, toggleTodoCompletion, updateTodo } = useTodoStore()
+    const { todos, loading, error, fetchTodos, addTodo, toggleTodoCompletion, updateTodo } = useTodoStore(
+        useShallow((state) => ({
+            todos: state.todos,
+            loading: state.loading,
+            error: state.error,
+            fetchTodos: state.fetchTodos,
+            addTodo: state.addTodo,
+            toggleTodoCompletion: state.toggleTodoCompletion,
+            updateTodo: state.updateTodo
+        }))
+    )
 
     const percentage = todos.length > 0 ? (todos.filter(todo => todo.is_completed).length / todos.length) * 100 : 0
 
     const [filteredTodos, setFilteredTodos] = useState([]);
 
-    const { logout, email, firstName, lastName, avatar } = useAuthStore();
+    const { logout, avatar } = useAuthStore(
+        useShallow((state) => ({
+            logout: state.logout,
+            avatar: state.avatar
+        }))
+    )
 
     const [searchQuery, setSearchQuery] = useState("");
 
